@@ -1,23 +1,35 @@
-# Price is Right
+# The Price is Right: Evaluating the role of price knowledge in advertising
 
-## 1 Motivation
+# Motivation
 
-We sought to examine how much people know about the distribution of prices in the world and how their knowledge determines the influence of advertisements. In Experiment 1, we asked participants to guess the prices of real-world product multiple times and also report confidence intervals (if the price was in the range they earned points, but fewer points if the range was larger). In Experiment 2, participants performed the same task but each product was accompanied by an advertisement.
+In this project, we sought to examine how much people know about the distribution of prices in the world and how their knowledge determines the influence of advertisements. In Experiment 1, we asked participants to guess the prices of real-world product multiple times and also report confidence intervals (if the price was in the range they earned points, but fewer points if the range was larger). Although together participants knew a great deal about the prices of objects (such as their average price and dispersion), individual participants' knowledge was much more impoverished. 
+
+Based on these findings, in Experiment 2 we tested whether participants used the price knowledge they did have to interpret advertisements and infer the prices of new products. Participants performed the same price guessing task but each product was accompanied by an advertisement. Despite possessing limited knowledge about the prices of objects, participant's used their price distribution knowledge alongside advertisements when guessing the prices of objects. That is, the more uncertain people were about the price of an object, the more they compensated for their uncertainty by relying on the advertisement. 
 
 This is a project I've been working on heavily with my advisor Ed Vul and he's the one responsible for these amazing graphs with ACTUAL images in them and the insane viola plot.
 
+# Experiment 1
+
+## 1 Method
+
+Here is an example of the actual experiment participants performed.
+
 ![Experiment example](priceisright_example.png)
 
-First going to quickly load some packages.
+Participants saw an object and guessed its average price (lower horizontal bar) and then set a confidence range (upper vertical bar) and could go back and worth between setting the values until they were satisfied.
+
+## 2 Loading data
+
+First going to quickly load some packages and then format my data.
 
 ```{r}
 source('utilities.R')
 library(jpeg)
 ```
 
-## 2 How much do PEOPLE know about the distribution of prices?
+Here I'm going to load my data and calculate some summary statistics. Unless you're interested in the nuts and bolts, I'd skip to part 3. 
 
-Here I'm going to load my data. Note, I'm log-transforming people's price estimates.
+Note, I'm log-transforming people's price estimates.
 
 ```{r}
 header = c('Subject', 'Block', 'Trial', 'Item.num', 'Item.Name', 'Item.File', 'Modifier.num', 'Modifier.Name', 'Modifier.Direction', 'True.Value', 'Estimate', 'BetValue', 'RangeValue', 'MinValue', 'MaxValue', 'Score', 'RT', 'Timestamp')
@@ -61,7 +73,9 @@ for(i in 1:nrow(objects)){
 }
 ```
 
-First let's look at aggregate performance--Averaging over multiple people, how much does the population know?
+## 3 How much do PEOPLE know about the average price of an object?
+
+First let's look at aggregate performance--Averaging over multiple people, how much does the population know? If we average people's guesses together (y-axis, Across.S.mean), how close are they to the actual prices of objects (x-axis)?
 
 ```{r, fig.width=7, fig.height=6}
 im.s = 0.05
@@ -73,7 +87,7 @@ ggplot(objects, aes(x=mean, y=Across.S.mean)) +
                       xmax=xx+im.s,
                       ymax=yy+im.s)},
     objects$mean, objects$Across.S.mean, objects$Item.Name) +
-  geom_abline(position="identity", color="gray",color='brown1')+
+  geom_abline(color="gray",color='brown1')+
   xlab(bquote('Mean'*~log[10]*' price'))+
   ylab(bquote('Mean'*~log[10]*' reported price'))+
   theme_bw() +
@@ -83,9 +97,11 @@ ggplot(objects, aes(x=mean, y=Across.S.mean)) +
         axis.title = element_text(size=22, face='bold'))
 ```
 
-And we find that the population really has a rather accurate estimate of the mean price of products!
+And we find that the population really has a rather accurate estimate of the mean price of products! The grey line indicates equality and people are pretty close to that.
 
-How well then do they know the dispersion of products' prices? For example, most basketballs are probably going to be around the same price (~$20). But something like a diamond ring can vary immensely in price from your low tier rings to your high tier rings.
+## 4 How much do people know about the dispersion of objects' prices
+
+In the real-world, people don't need to just know the average price of an object. The price of a shirt can be highly variable like a $5 shirt at H & M compared to a $50 shirt at Urban Outfitters while a basketball is probably going to cost about $20 no matter where you go. How well then do people know the dispersion of products' prices? To evaluate people's price dispersion knowledge, we measured the standard deviation of people's guesses (y-axis, Across.S.sd) for each product and compared it to the actual standard deviation of the product's price (x-axis, sd).
 
 ```{r, fig.width=7, fig.height=6}
 im.s = 0.015
@@ -98,7 +114,7 @@ ggplot(objects,
                       xmax=xx+im.s,
                       ymax=yy+im.s)},
     objects$sd, objects$Across.S.sd, objects$Item.Name) +
-  geom_abline(position="identity", color='gray')+
+  geom_abline(color='gray')+
   geom_smooth(method="lm",color='brown1')+
   coord_cartesian(ylim=c(0.065, 0.84), xlim=c(0.065, 0.84))+
   xlab(bquote('SD'*~log[10]*' price'))+
@@ -111,13 +127,15 @@ ggplot(objects,
 
 ```
 
-And the population--though not perfect--does a pretty good job at estimating the dispersion of prices.
+And the population--though not perfect--does a pretty good job at estimating the dispersion of prices. This suggests that the population as a whole generally knows how much the price of an object varies. 
 
-## 3 How much do INDIVIDUALS know about the distribution of prices?
+## 5 How much do INDIVIDUALS know about the dispersion of prices?
 
-So the population knows a good deal about the distribution of prices. But do individuals have the same kind of sophisticated, detailed knowledge?
+So people seem to know a good deal about the distribution of prices. But these results reflect the knowledge of **all** of our subjects aggregated together. If we look at the distribution of each individual subject's response, do we the same kind of veridical knowledge?
 
-First we can look at people's confidence intervals
+### 5.1 As measured by confidence intervals...
+
+First we can look at people's confidence intervals (y-axis, Within.S.range): Do people set confidence intervals that cover about the full-dispersion of the each product's price?
 
 ```{r, fig.width=7, fig.height=6}
 ggplot(objects, 
@@ -129,7 +147,7 @@ ggplot(objects,
                       xmax=xx+im.s,
                       ymax=yy+im.s)},
     objects$sd, objects$Within.S.range, objects$Item.Name) +
-  geom_abline(position="identity", color='gray')+
+  geom_abline(color='gray')+
   geom_smooth(method="lm",color="brown1")+
   coord_cartesian(ylim=c(0.065, 0.84), xlim=c(0.065, 0.84))+
   xlab(bquote('SD'*~log[10]*' price'))+
@@ -141,9 +159,11 @@ ggplot(objects,
         axis.title = element_text(size=22, face='bold'))
 ```
 
-And find that, even though they have a sense of the relative dispersion of objects (what objects have more or less varaible prices), they're poorly calibrated to how much objects' prices ACTUALLY vary.
+Participants do seem to have some knowledge of how variable objects' prices are. The regression line is positive, indicating that people might know, say, the price of a shirt varies more than the price of a basketball. But people are poorly calibrated to how much objects' prices ACTUALLY vary, as reflected by the regression line being far from equality (the grey diagonal line).
 
-What about when we take the standard deviation of each individual's responses for a given object?
+### 5.2 As measured by the dispersion of people's guesses
+
+However, it's possible that people used our confidence scale in a way that didn't reflect their knowledge of products' price distributions. Consequently, tested whether people used their price knowledge when making their individual responses. Similar to our previous analysis, we compared the standard deviation of participants' responses to the true standard deviation of each object's price. BUT, whereas before we calculated the standard deviation of all the participants' responses aggregated together, here we focused on individuals and found the standard deviation of each participant's responses for a given object (y-axis, Within.S.sd). This is why it was crucial for us to ask people to make guesses about objects multiple times. 
 
 ```{r, fig.width=7, fig.height=6}
 ggplot(objects, 
@@ -155,7 +175,7 @@ ggplot(objects,
                       xmax=xx+im.s,
                       ymax=yy+im.s)},
     objects$sd, objects$Within.S.sd, objects$Item.Name) +
-  geom_abline(position="identity", color='gray')+
+  geom_abline(color='gray')+
   geom_smooth(method="lm",color='brown1')+
   coord_cartesian(ylim=c(0.065, 0.84), xlim=c(0.065, 0.84))+
   xlab(bquote('SD'*~log[10]*' price'))+
@@ -168,11 +188,15 @@ ggplot(objects,
 
 ```
 
-Once again, correlated, but poorly calibrated. So whereas the population had very accurate knowledge about how prices are distributed, individuals only had a rough sense about what objects ahd more or less variable prices.
+Similar to confidence intervals, individuals's responses are correlated, but poorly calibrated with the true dispersion of prices. So whereas the population had very accurate knowledge about how prices are distributed, individuals only had a rough sense about what objects had more or less variable prices and really no idea of how much prices varied.
 
-## 4 Do advertisements influence price estimates?
+# Experiment 2
 
-Let's load our advertisement data
+We expected that people would use their knowledge of the dispersion of prices to rationally interpret advertisements. More concretely, the more uncertain people are about the price of an object (i.e., the higher the dispersion of an object's price), the more they should rely on an advertisement. Given that individuals seemed to have rather poor knowledge of the dispersion of knowledge, we were unsure whether people would actually account for the distribution of products' prices. Consequently, we had people perform a similar task. Once again, participants made multiple guesses about the prices of different objects. However, this time each product was accompanied by an advertisement (which are laid out in the figure below). We wrote a set of 50 ads half of which were positive and half of which were negative. 
+
+## 1 Do advertisements influence price estimates?
+
+Before we start comparing people's price distribution knowledge to the effects of advertisements, lets see if our advertisements had any effect on people's guesses. We evaluated the effect of each ad by measuring the rank of an each object given that ad. The idea behind this measure is that each object was presented multiple times with different ads. For each object then, we can find its percentile rank for a given ad and then average those percentile ranks within ads and across objects. So if all the objects had their highest perceived value when we told the participants the objects were "brand-new", their price percentile would be 1 (top percentile).
 
 ```{r}
 files = list.files(path = 'data/valuead/')
@@ -227,7 +251,7 @@ full.dat$True.L10.SD = s[full.dat$Item.Name]
 full.dat$L10.Estimate = log10(full.dat$Estimate)
 ```
 
-We wrote a set of ads half of which were positive and half of which were negative. Here we can see the effect of each ad on price estimates.
+Here we can see the effect of each ad on price estimates. Below, higher precentile ranks indicate higher average ratings. The red viola plots represent histograms, the lines are 25%-75% CI and boxes are 1 SD.
 
 ```{r, fig.width=12, fig.height=10}
 # Sort modifier levels by effectiveness
@@ -266,11 +290,11 @@ ggplot(full.dat, aes(x=Modifier.Name, y=Est.Item.Rank))+
         axis.text.x = element_text(angle=90,hjust=1))
 ```
 
-There's a lot going on in this plot so let me break it down. On the x-axis we have the our different ads. On the y-axis we have the ads' effect on price estimates. The idea behind this measure is that each object was presented multiple times with different ads. For each object then, we can find its percentile rank for a given ad and then average those percentile ranks within ads and across objects. So higher precentil ranks indicate higher average ratings. The red viola plots represent histograms, the lines are 25%-75% CI and and boxes are 1 SD.
+There's a lot going on in this plot so let me break it down. On the x-axis we have the our different ads. On the y-axis we have the ads' effect on price estimates. 
 
 And our ads, despite being somewhat crude, actually affected people's prices estimates! There are a few fun patterns to pick out here. We can see that the opinion of the New Yorker is rated more highly than Consumer Reports. And that people have significant preferences for where their products are made (Italy>Germany>USA>China>Mexico>Malaysia).
 
-## 5 Did people use their price knowledge to interpret ads?
+## 2 Did people use their price knowledge to interpret ads?
 
 Advertisements can help people infer the value of products when they're uncertain. A rational Bayesian agent, for example, should rely more heavily on ads for products that have more variable prices. That being said, their ability to do so may be impaired by their poor knowledge of price distributions. To test this, we designed a mixed effect model that estimates the influence of each ad for each object and found the absolute difference between the average effect of positive ads and the average effect of the negative ads. If ads were more effective for high price variability objects, then there should be a larger difference between the positive and negative ads for those objects.
 
@@ -328,7 +352,18 @@ ggplot(objects.val,
 
 And that's what we find! Note, this a small effect (the difference in magnitude is quite small), but a significant one, which jives with our finding that people's distribution knowledge is poorly calibrated.
 
-# 6 Conclusions
+For example, compared to the variance accounted for by the ads themselves
+
+```{r}
+ads.magnitude=mean(abs(ranef(item.mod)$'Modifier.Name')[[1]])
+ads.disp.magnitude=mean(abs(ranef(item.mod)$'Modifier.Name:Item.Name')[[1]])
+
+ads.disp.magnitude/(ads.magnitude+ads.disp.magnitude)
+
+```
+
+
+# 8 Conclusions
 
 Even though individuals possess deficient knowledge of price distributions, they use that knowledge to some extent to interpret advertisements. There's a few immediate questions that these results raise:
 
