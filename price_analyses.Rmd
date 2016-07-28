@@ -4,7 +4,7 @@
 
 In this project, we sought to examine how much people know about the distribution of prices in the world and how their knowledge determines the influence of advertisements. In Experiment 1, we asked participants to guess the prices of real-world product multiple times and also report confidence intervals (if the price was in the range they earned points, but fewer points if the range was larger). Although together participants knew a great deal about the prices of objects (such as their average price and dispersion), individual participants' knowledge was much more impoverished. 
 
-Based on these findings, in Experiment 2 we tested whether participants used the price knowledge they did have to interpret advertisements and infer the prices of new products. Participants performed the same price guessing task but each product was accompanied by an advertisement. Despite possessing limited knowledge about the prices of objects, participant's used their price distribution knowledge alongside advertisements when guessing the prices of objects. That is, the more uncertain people were about the price of an object, the more they compensated for their uncertainty by relying on the advertisement. 
+Based on these findings, in Experiment 2 we tested whether participants used the price knowledge they did have to interpret advertisements and infer the prices of new products. Participants performed the same price guessing task but each product was accompanied by an advertisement. Despite possessing limited knowledge about the prices of objects, participant's used their price distribution knowledge alongside advertisements when guessing the prices of objects. That is, the more uncertain people were about the prices of objects, the more they compensated for their uncertainty by relying on the advertisements. 
 
 This is a project I've been working on heavily with my advisor Ed Vul and he's the one responsible for these amazing graphs with ACTUAL images in them and the insane viola plot.
 
@@ -131,7 +131,7 @@ And the population--though not perfect--does a pretty good job at estimating the
 
 ## 5 How much do INDIVIDUALS know about the dispersion of prices?
 
-So people seem to know a good deal about the distribution of prices. But these results reflect the knowledge of **all** of our subjects aggregated together. If we look at the distribution of each individual subject's response, do we the same kind of veridical knowledge?
+So people seem to know a good deal about the distribution of prices. But these results reflect the knowledge of **all** of our subjects aggregated together. If we look at the distribution of each **individual** subject's responses, do we see the same kind of accurate knowledge?
 
 ### 5.1 As measured by confidence intervals...
 
@@ -163,7 +163,7 @@ Participants do seem to have some knowledge of how variable objects' prices are.
 
 ### 5.2 As measured by the dispersion of people's guesses
 
-However, it's possible that people used our confidence scale in a way that didn't reflect their knowledge of products' price distributions. Consequently, tested whether people used their price knowledge when making their individual responses. Similar to our previous analysis, we compared the standard deviation of participants' responses to the true standard deviation of each object's price. BUT, whereas before we calculated the standard deviation of all the participants' responses aggregated together, here we focused on individuals and found the standard deviation of each participant's responses for a given object (y-axis, Within.S.sd). This is why it was crucial for us to ask people to make guesses about objects multiple times. 
+However, it's possible that people used our confidence scale in a way that didn't reflect their knowledge of products' price distributions. Consequently, tested whether people used their price knowledge when making their individual responses. Similar to our previous analysis (4), we compared the standard deviation of participants' responses to the true standard deviation of each object's price. BUT, whereas before we calculated the standard deviation of all the participants' responses aggregated together, here we focused on individuals and found the standard deviation of each participant's responses for a given object (y-axis, Within.S.sd). This is why it was crucial for us to ask people to make guesses about objects multiple times. 
 
 ```{r, fig.width=7, fig.height=6}
 ggplot(objects, 
@@ -192,11 +192,11 @@ Similar to confidence intervals, individuals's responses are correlated, but poo
 
 # Experiment 2
 
-We expected that people would use their knowledge of the dispersion of prices to rationally interpret advertisements. More concretely, the more uncertain people are about the price of an object (i.e., the higher the dispersion of an object's price), the more they should rely on an advertisement. Given that individuals seemed to have rather poor knowledge of the dispersion of knowledge, we were unsure whether people would actually account for the distribution of products' prices. Consequently, we had people perform a similar task. Once again, participants made multiple guesses about the prices of different objects. However, this time each product was accompanied by an advertisement (which are laid out in the figure below). We wrote a set of 50 ads half of which were positive and half of which were negative. 
+We expected that people would use their knowledge of the dispersion of prices to rationally interpret advertisements. More concretely, the more uncertain people are about the price of an object (i.e., the higher the dispersion of an object's price), the more they should rely on advertisements to compensate. Given that individuals seemed to have rather poor knowledge of the dispersion of knowledge, we were unsure whether people would actually account for the distribution of products' prices. Consequently, we had people perform a similar task. Once again, participants made multiple guesses about the prices of different objects. However, this time each product was accompanied by an advertisement (which are laid out in the figure below). We wrote a set of 50 ads half of which were positive and half of which were negative. 
 
 ## 1 Do advertisements influence price estimates?
 
-Before we start comparing people's price distribution knowledge to the effects of advertisements, lets see if our advertisements had any effect on people's guesses. We evaluated the effect of each ad by measuring the rank of an each object given that ad. The idea behind this measure is that each object was presented multiple times with different ads. For each object then, we can find its percentile rank for a given ad and then average those percentile ranks within ads and across objects. So if all the objects had their highest perceived value when we told the participants the objects were "brand-new", their price percentile would be 1 (top percentile).
+Before we start comparing people's price distribution knowledge to the effects of advertisements, lets see if our advertisements had any effect on people's guesses. We evaluated the effect of each ad by measuring the rank of an object given that ad. The idea behind this measure is that each object was presented multiple times with different ads. For each object then, we can find its percentile rank for a given ad and then average those percentile ranks within ads and across objects. So if all the objects had their highest perceived value when we told the participants the objects were "brand-new", their price percentile would be 1 (top percentile).
 
 ```{r}
 files = list.files(path = 'data/valuead/')
@@ -251,7 +251,7 @@ full.dat$True.L10.SD = s[full.dat$Item.Name]
 full.dat$L10.Estimate = log10(full.dat$Estimate)
 ```
 
-Here we can see the effect of each ad on price estimates. Below, higher precentile ranks indicate higher average ratings. The red viola plots represent histograms, the lines are 25%-75% CI and boxes are 1 SD.
+Here we can see the effect of each ad on price estimates. 
 
 ```{r, fig.width=12, fig.height=10}
 # Sort modifier levels by effectiveness
@@ -290,7 +290,7 @@ ggplot(full.dat, aes(x=Modifier.Name, y=Est.Item.Rank))+
         axis.text.x = element_text(angle=90,hjust=1))
 ```
 
-There's a lot going on in this plot so let me break it down. On the x-axis we have the our different ads. On the y-axis we have the ads' effect on price estimates. 
+There's a lot going on in this plot so let me break it down. On the x-axis we have the our different ads. On the y-axis we have the ads' effect on price estimates. A higher percentile rank indicates higher average ratings. The red viola plots represent histograms, the lines are 25%-75% CI and boxes are 1 SD.
 
 And our ads, despite being somewhat crude, actually affected people's prices estimates! There are a few fun patterns to pick out here. We can see that the opinion of the New Yorker is rated more highly than Consumer Reports. And that people have significant preferences for where their products are made (Italy>Germany>USA>China>Mexico>Malaysia).
 
